@@ -1,0 +1,83 @@
+version: 2
+
+references:
+  container_config: &container_config
+    docker:
+      - image: google/cloud-sdk
+    environment:
+      PROJECT_NAME: orangesys
+      CLOUDSDK_COMPUTE_ZONE: asia-northeast1-c
+      ORG_PATH: "github.com/orangesys"
+      REPO_PATH: "${ORG_PATH}/${CIRCLE_PROJECT_REPONAME}"
+      BASH_ENV: .circleci/checktag.sh
+  install_docker_client: &install_docker_client      
+    run:
+      name: Install docker client
+      command: |
+        set -x
+        VER="17.05.0-ce"
+        curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+        tar -xz -C /tmp/ -f /tmp/docker-$VER.tgz
+        mv /tmp/docker/* /usr/bin
+  restore_cache: &restore_cache
+    keys: 
+      - v1-{{ checksum "Dockerfile" }}-{{ .Environment.CIRCLE_SHA1 }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+
+jobs:
+  build:
+    <<: *container_config
+    steps:
+      - checkout
+      - setup_remote_docker
+      - *install_docker_client
+      - run:
+          name: Build container images
+          command: |
+            docker build --tag "orangesys/${CIRCLE_PROJECT_REPONAME}:${version}" .
+            docker images
+      - run:
+          name: save container image to workspace
+          command: |
+            [ ! -d /caches ] && mkdir /caches
+            docker save -o /caches/${CIRCLE_PROJECT_REPONAME}-${version}.tar "orangesys/${CIRCLE_PROJECT_REPONAME}:${version}"
+            ls /caches
+      - save_cache:
+          key: v1-{{ checksum "Dockerfile" }}-{{ .Environment.CIRCLE_SHA1 }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+          paths:
+            - "/caches"
+
+  push:
+    <<: *container_config
+    steps:
+      - checkout
+      - restore_cache: *restore_cache
+      - setup_remote_docker
+      - *install_docker_client
+      - run:
+          name: Load Docker image layer cache
+          command: |
+            ls /caches
+            docker load -i /caches/${CIRCLE_PROJECT_REPONAME}-${version}.tar
+            docker images
+      - run:
+          name: Show docker images & set tag & push docker hub and gcloud
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker push orangesys/${CIRCLE_PROJECT_REPONAME}:${version}
+            curl -X POST https://hooks.microbadger.com/images/orangesys/ruby-node/VA0rqAILDqhvg0RFIgvOi2BldjE=
+workflows:
+  version: 2
+  build-and-push:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/ 
+      - push:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
