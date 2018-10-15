@@ -5,9 +5,6 @@ references:
     docker:
       - image: google/cloud-sdk
     environment:
-      PROJECT_NAME: orangesys
-      CLOUDSDK_COMPUTE_ZONE: asia-northeast1-c
-      ORG_PATH: "github.com/orangesys"
       REPO_PATH: "${ORG_PATH}/${CIRCLE_PROJECT_REPONAME}"
       BASH_ENV: .circleci/checktag.sh
   install_docker_client: &install_docker_client      
@@ -33,13 +30,13 @@ jobs:
       - run:
           name: Build container images
           command: |
-            docker build --tag "orangesys/${CIRCLE_PROJECT_REPONAME}:${version}" .
+            docker build --tag "palettecloud/${CIRCLE_PROJECT_REPONAME}:${version}" .
             docker images
       - run:
           name: save container image to workspace
           command: |
             [ ! -d /caches ] && mkdir /caches
-            docker save -o /caches/${CIRCLE_PROJECT_REPONAME}-${version}.tar "orangesys/${CIRCLE_PROJECT_REPONAME}:${version}"
+            docker save -o /caches/${CIRCLE_PROJECT_REPONAME}-${version}.tar "palettecloud/${CIRCLE_PROJECT_REPONAME}:${version}"
             ls /caches
       - save_cache:
           key: v1-{{ checksum "Dockerfile" }}-{{ .Environment.CIRCLE_SHA1 }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
@@ -63,8 +60,7 @@ jobs:
           name: Show docker images & set tag & push docker hub and gcloud
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker push orangesys/${CIRCLE_PROJECT_REPONAME}:${version}
-            curl -X POST https://hooks.microbadger.com/images/orangesys/ruby-node/VA0rqAILDqhvg0RFIgvOi2BldjE=
+            docker push palettecloud/${CIRCLE_PROJECT_REPONAME}:${version}
 workflows:
   version: 2
   build-and-push:
