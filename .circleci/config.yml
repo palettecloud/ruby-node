@@ -57,7 +57,7 @@ jobs:
             docker load -i /caches/${CIRCLE_PROJECT_REPONAME}-${version}.tar
             docker images
       - run:
-          name: Show docker images & set tag & push docker hub and gcloud
+          name: Show docker images & set tag & push docker hub
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push palettecloud/${CIRCLE_PROJECT_REPONAME}:${version}
