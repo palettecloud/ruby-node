@@ -30,13 +30,13 @@ jobs:
       - run:
           name: Build container images
           command: |
-            docker build --tag "palettecloud/${CIRCLE_PROJECT_REPONAME}:${version}" .
+            docker build --tag "quay.io/palettecloud/${CIRCLE_PROJECT_REPONAME}:${version}" .
             docker images
       - run:
           name: save container image to workspace
           command: |
             [ ! -d /caches ] && mkdir /caches
-            docker save -o /caches/${CIRCLE_PROJECT_REPONAME}-${version}.tar "palettecloud/${CIRCLE_PROJECT_REPONAME}:${version}"
+            docker save -o /caches/${CIRCLE_PROJECT_REPONAME}-${version}.tar "quay.io/palettecloud/${CIRCLE_PROJECT_REPONAME}:${version}"
             ls /caches
       - save_cache:
           key: v1-{{ checksum "Dockerfile" }}-{{ .Environment.CIRCLE_SHA1 }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}
@@ -59,8 +59,8 @@ jobs:
       - run:
           name: Show docker images & set tag & push docker hub
           command: |
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker push palettecloud/${CIRCLE_PROJECT_REPONAME}:${version}
+            docker login -u $QUAY_USER -p $QUAY_PASS quay.io
+            docker push quay.io/palettecloud/${CIRCLE_PROJECT_REPONAME}:${version}
 workflows:
   version: 2
   build-and-push:
