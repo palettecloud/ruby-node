@@ -16,7 +16,7 @@ RUN set -ex \
     DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
     A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
   ; do \
-    gpg --keyserver pool.sks-keyservers.net --recv-keys "$key" ; \
+    gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys "$key" ; \
   done
 
 ENV NPM_CONFIG_LOGLEVEL info
