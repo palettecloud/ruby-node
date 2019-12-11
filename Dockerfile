@@ -1,5 +1,4 @@
-FROM ruby:2.4.7-stretch
-LABEL maintainer "gavin zhou <gavin.zhou@gmail.com>"
+FROM ruby:2.6.5-stretch
 
 # gpg keys listed at https://github.com/nodejs/node#release-team
 RUN set -ex \
