@@ -20,7 +20,7 @@ RUN set -ex \
   done
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 12.13.0
+ENV NODE_VERSION 8.12.0
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
@@ -28,4 +28,15 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && grep " node-v$NODE_VERSION-linux-x64.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
+
+# use libssl1.0.0
+RUN echo "deb http://security.debian.org/debian-security jessie/updates main" >> /etc/apt/sources.list
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    libssl1.0.0
+# yarn
+RUN apt-get update && apt-get install -y curl apt-transport-https wget && \
+  curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+  echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+  apt-get update && apt-get install -y yarn
+
 # end of reference
