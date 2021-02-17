@@ -1,4 +1,4 @@
-FROM ruby:2.7.2-buster
+FROM ruby:2.5.8-buster
 LABEL maintainer "gavin zhou <gavin.zhou@gmail.com>"
 
 # gpg keys listed at https://github.com/nodejs/node#release-team
