@@ -1,4 +1,4 @@
-FROM ruby:3.0.3-stretch
+FROM ruby:3.0.3-buster
 LABEL maintainer "joo <joo@palette.cloud>"
 
 # gpg keys listed at https://github.com/nodejs/node#release-team
