@@ -1,4 +1,4 @@
-FROM ruby:3.0.7-bullseye
+FROM ruby:3.1.6-bookworm
 LABEL maintainer "gavin zhou <gavin.zhou@gmail.com>"
 
 # gpg keys listed at https://github.com/nodejs/node#release-keys
