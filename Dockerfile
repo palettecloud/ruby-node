@@ -37,3 +37,7 @@ RUN set -ex \
        && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
        && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt; \
      fi
+
+# https://github.com/nodejs/node-gyp/blob/main/docs/Force-npm-to-use-global-node-gyp.md#linux-and-macos
+RUN npm install -g node-gyp@9.3.1
+RUN npm config set node_gyp $(npm prefix -g)/lib/node_modules/node-gyp/bin/node-gyp.js
