@@ -39,5 +39,5 @@ jobs:
           context: .
           platforms: ${{ matrix.platform }}
           push: true
-          tags: ${{ env.TAG }}
+          tags: ${{ env.REGISTRY_IMAGE }}:${{ env.TAG }}
           labels: ${{ steps.meta.outputs.labels }}
