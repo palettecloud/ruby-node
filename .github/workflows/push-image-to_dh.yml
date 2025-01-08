@@ -2,7 +2,9 @@ name: Push docker image to Docker Hub
 
 on:
   release:
-    types: [published]
+    types:
+      - published
+      - prereleased
   workflow_dispatch:
     inputs:
       tag_name:
