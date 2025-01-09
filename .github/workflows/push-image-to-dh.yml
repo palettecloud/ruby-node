@@ -16,11 +16,6 @@ env:
 jobs:
   push_image:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-qemu-action@v3
@@ -38,7 +33,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: ${{ matrix.platform }}
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.REGISTRY_IMAGE }}:${{ env.TAG }}
           labels: ${{ steps.meta.outputs.labels }}
