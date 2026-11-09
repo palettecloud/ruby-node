@@ -1,4 +1,4 @@
-FROM ruby:3.3.12-bookworm
+FROM ruby:3.4.12-bookworm
 LABEL maintainer "gavin zhou <gavin.zhou@gmail.com>"
 
 # gpg keys listed at https://github.com/nodejs/node#release-keys
@@ -14,7 +14,8 @@ RUN set -ex \
     C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
     108F52B48DB57BB0CC439B2997B01419BD92F80A \
   ; do \
-    gpg --keyserver hkps://keys.openpgp.org --recv-keys "$key" ; \
+    gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
+    gpg --batch --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys "$key" ; \
   done
 
 ENV NPM_CONFIG_LOGLEVEL info
